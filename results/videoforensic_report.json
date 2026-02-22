@@ -1,0 +1,29 @@
+{
+    "summary": "data/0221.mp4",
+    "analysis": {
+        "duration": {
+            "video_1": 10.2,
+            "video_2": 10.216803
+        },
+        "bit_rate": {
+            "video_1": 2159461,
+            "video_2": 8451159
+        },
+        "codec": {
+            "video_1": "h264",
+            "video_2": "hevc"
+        },
+        "width": {
+            "video_1": 1280,
+            "video_2": 1920
+        },
+        "height": {
+            "video_1": 720,
+            "video_2": 1080
+        },
+        "profile": {
+            "video_1": "High",
+            "video_2": "Main"
+        }
+    }
+}

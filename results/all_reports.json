@@ -1,0 +1,48 @@
+[
+    {
+        "video": "data/videoforensic.mp4",
+        "summary": "data/0221.mp4",
+        "analysis": {
+            "duration": {
+                "video_1": 10.2,
+                "video_2": 10.216803
+            },
+            "bit_rate": {
+                "video_1": 2159461,
+                "video_2": 8451159
+            },
+            "codec": {
+                "video_1": "h264",
+                "video_2": "hevc"
+            },
+            "width": {
+                "video_1": 1280,
+                "video_2": 1920
+            },
+            "height": {
+                "video_1": 720,
+                "video_2": 1080
+            },
+            "profile": {
+                "video_1": "High",
+                "video_2": "Main"
+            }
+        }
+    },
+    {
+        "video": "data/0221.mp4",
+        "summary": {
+            "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+            "duration": 10.216803,
+            "bit_rate": 8451159,
+            "codec": "hevc",
+            "width": 1920,
+            "height": 1080,
+            "fps": "30/1",
+            "profile": "Main"
+        },
+        "analysis": [
+            "⚠ Video có dấu hiệu re-encode bằng FFmpeg."
+        ]
+    }
+]
