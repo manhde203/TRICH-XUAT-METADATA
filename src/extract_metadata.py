@@ -3,8 +3,22 @@ import subprocess
 import json
 import os
 import sys
+from tkinter import Tk, filedialog
+# ==============================
+# 0. CHỌN VIDEO BẰNG GIAO DIỆN
+# ==============================
 
+def select_video_file(title="Select video"):
+    root = Tk()
+    root.withdraw()
+    root.attributes('-topmost', True)  # luôn nổi lên trước
+    file_path = filedialog.askopenfilename(
+        title=title,
+        filetypes=[("Video files", "*.mp4 *.avi *.mkv *.mov"), ("All files", "*.*")]
+    )
 
+    root.destroy()
+    return file_path
 # ==============================
 # 1. TRÍCH XUẤT METADATA
 # ==============================
@@ -29,7 +43,7 @@ def extract_metadata(video_path):
         return json.loads(result.stdout)
 
     except FileNotFoundError:
-        print("❌ Không tìm thấy ffprobe. Kiểm tra lại PATH.")
+        print("Không tìm thấy ffprobe. Kiểm tra lại PATH.")
         sys.exit(1)
 
     except subprocess.CalledProcessError as e:
@@ -115,18 +129,10 @@ def compare_videos(meta1, meta2):
             }
 
     return differences
-
-def save_report(video_path, summary, warnings):
+def save_report(entry):
     os.makedirs("results", exist_ok=True)
     output_path = "results/all_reports.json"
 
-    new_entry = {
-        "video": video_path,
-        "summary": summary,
-        "analysis": warnings
-    }
-
-    # Nếu file đã tồn tại thì đọc dữ liệu cũ
     if os.path.exists(output_path):
         with open(output_path, "r", encoding="utf-8") as f:
             try:
@@ -136,14 +142,13 @@ def save_report(video_path, summary, warnings):
     else:
         data = []
 
-    # Thêm bản ghi mới
-    data.append(new_entry)
+    data.append(entry)
 
-    # Ghi lại toàn bộ
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
     print(f"\n📁 Đã cập nhật báo cáo vào: {output_path}")
+
 # ==============================
 # 5. MAIN MENU
 # ==============================
@@ -152,13 +157,15 @@ def main():
     print("====== VIDEO FORENSIC TOOL ======")
     print("1. Phân tích 1 video")
     print("2. So sánh 2 video")
+
     choice = input("Chọn chức năng (1/2): ")
 
     if choice == "1":
-        video_path = input("Nhập đường dẫn video: ").strip('"')
 
-        if not os.path.exists(video_path):
-            print("❌ File không tồn tại!")
+        video_path = select_video_file("Chọn video cần phân tích")
+
+        if not video_path:
+            print("Không chọn file.")
             return
 
         metadata = extract_metadata(video_path)
@@ -172,14 +179,19 @@ def main():
         for w in warnings:
             print(w)
 
-        save_report(video_path, summary, warnings)
+        save_report({
+            "video": video_path,
+            "summary": summary,
+            "analysis": warnings
+        })
 
     elif choice == "2":
-        video1 = input("Video 1: ").strip('"')
-        video2 = input("Video 2: ").strip('"')
 
-        if not os.path.exists(video1) or not os.path.exists(video2):
-            print("❌ Một trong hai file không tồn tại!")
+        video1 = select_video_file("Chọn video 1")
+        video2 = select_video_file("Chọn video 2")
+
+        if not video1 or not video2:
+            print("Chưa chọn đủ 2 video.")
             return
 
         meta1 = extract_metadata(video1)
@@ -191,8 +203,14 @@ def main():
         if differences:
             print(json.dumps(differences, indent=4))
         else:
-            print("✅ Hai video có metadata giống nhau.")
-        save_report(video1, video2, differences)
+            print("Hai video có metadata giống nhau.")
+
+        save_report({
+            "video_1": video1,
+            "video_2": video2,
+            "differences": differences
+        })
+
     else:
         print("Lựa chọn không hợp lệ.")
 
